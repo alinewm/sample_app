@@ -58,20 +58,13 @@ class User < ActiveRecord::Base
 
   # Sends password reset email.
   def send_password_reset_email
-    self.reset_token = User.new_token
-    update_attribute(:reset_digest, User.digest(reset_token))
-    update_attribute(:reset_sent_at, Time.zone.now)
+    UserMailer.password_reset(self).deliver_now
   end
 
   # Sends password reset email.
   def send_password_digest
     self.activation_token = User.new_token
     self.activation_digest = User.digest(activation_token)
-  end
-
-  # Send password reset attributes.
-  def send_password_reset_email
-    UserMailer.password_reset(self).deliver_now
   end
 
   # Returns true if a password has been expired.
